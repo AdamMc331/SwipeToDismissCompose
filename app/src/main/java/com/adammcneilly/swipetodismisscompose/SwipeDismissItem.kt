@@ -2,32 +2,72 @@ package com.adammcneilly.swipetodismisscompose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SwipeDismissItem(
-    background: @Composable RowScope.() -> Unit,
-    content: @Composable RowScope.() -> Unit,
+    content: @Composable () -> Unit,
     onDismissed: (isDismissed: Boolean) -> Unit,
 ) {
-    val dismissState = rememberDismissState()
+    val hasTriedToDismiss = remember { mutableStateOf(false) }
+    val hasConfirmedDismissal = remember { mutableStateOf(false) }
+
+    val dismissState = rememberDismissState(
+        confirmStateChange = {
+            hasTriedToDismiss.value = true
+
+            hasConfirmedDismissal.value
+        }
+    )
     val dismissedToEnd = dismissState.isDismissed(DismissDirection.StartToEnd)
     val dismissedToStart = dismissState.isDismissed(DismissDirection.EndToStart)
     val isDismissed = (dismissedToEnd || dismissedToStart)
 
     onDismissed.invoke(isDismissed)
 
+    val contentOffset = if (hasTriedToDismiss.value) {
+        48.dp
+    } else {
+        0.dp
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+
     AnimatedVisibility(visible = !isDismissed) {
         SwipeToDismiss(
             state = dismissState,
-            background = background,
-            dismissContent = content,
-        )
+            background = {
+                SwipeBackground(
+                    onDeleteClicked = {
+                        hasConfirmedDismissal.value = true
+
+                        coroutineScope.launch {
+                            dismissState.dismiss(DismissDirection.StartToEnd)
+                        }
+                    }
+                )
+            },
+        ) {
+            Box(
+                modifier = Modifier.offset(x = contentOffset),
+            ) {
+                content()
+            }
+        }
     }
 }
