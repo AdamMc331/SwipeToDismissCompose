@@ -10,6 +10,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -17,6 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -24,14 +28,16 @@ fun SwipeDismissItem(
     content: @Composable () -> Unit,
     onDismissed: (isDismissed: Boolean) -> Unit,
 ) {
+
+    // Tips for understanding differences: https://dev.to/zachklipp/remember-mutablestateof-a-cheat-sheet-10ma
     val hasTriedToDismiss = remember { mutableStateOf(false) }
-    val hasConfirmedDismissal = remember { mutableStateOf(false) }
+    var hasConfirmedDismissal: Boolean by remember { mutableStateOf(false) }
 
     val dismissState = rememberDismissState(
         confirmStateChange = {
             hasTriedToDismiss.value = true
 
-            hasConfirmedDismissal.value
+            hasConfirmedDismissal
         }
     )
     val dismissedToEnd = dismissState.isDismissed(DismissDirection.StartToEnd)
@@ -54,7 +60,7 @@ fun SwipeDismissItem(
             background = {
                 SwipeBackground(
                     onDeleteClicked = {
-                        hasConfirmedDismissal.value = true
+                        hasConfirmedDismissal = true
 
                         coroutineScope.launch {
                             dismissState.dismiss(DismissDirection.StartToEnd)
