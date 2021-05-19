@@ -3,6 +3,7 @@ package com.adammcneilly.swipetodismisscompose
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,8 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun TextList(texts: List<String>) {
     LazyColumn {
         items(texts) { text ->
-            SwipeToDismiss(
-                state = rememberDismissState(),
+            SwipeDismissItem(
                 background = {
                     Box(
                         modifier = Modifier
@@ -30,12 +30,18 @@ fun TextList(texts: List<String>) {
                             .background(color = Color.Red)
                     )
                 },
-                dismissContent = {
-                    TextListItem(text = text)
+                content = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        TextListItem(text = text)
+
+                        Divider(
+                            color = Color.DarkGray,
+                        )
+                    }
                 }
             )
-
-            Divider()
         }
     }
 }
