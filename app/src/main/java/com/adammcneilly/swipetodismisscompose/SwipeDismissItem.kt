@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
@@ -35,9 +36,13 @@ fun SwipeDismissItem(
 
     val dismissState = rememberDismissState(
         confirmStateChange = {
-            hasTriedToDismiss.value = true
+            if (it == DismissValue.DismissedToEnd) {
+                hasTriedToDismiss.value = true
 
-            hasConfirmedDismissal
+                hasConfirmedDismissal
+            } else {
+                false
+            }
         }
     )
     val dismissedToEnd = dismissState.isDismissed(DismissDirection.StartToEnd)
@@ -57,6 +62,7 @@ fun SwipeDismissItem(
     AnimatedVisibility(visible = !isDismissed) {
         SwipeToDismiss(
             state = dismissState,
+            directions = setOf(DismissDirection.StartToEnd),
             background = {
                 SwipeBackground(
                     onDeleteClicked = {

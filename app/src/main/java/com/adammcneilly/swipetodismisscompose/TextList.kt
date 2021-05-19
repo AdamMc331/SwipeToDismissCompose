@@ -69,16 +69,12 @@ fun SwipeBackground(
     onDeleteClicked: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxHeight(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.Red),
     ) {
-        Box(
-            modifier = Modifier
-                .background(color = Color.Red)
-                .fillMaxHeight(),
-        ) {
-            IconButton(onClick = onDeleteClicked) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete")
-            }
+        IconButton(onClick = onDeleteClicked) {
+            Icon(Icons.Default.Delete, contentDescription = "Delete")
         }
     }
 }
