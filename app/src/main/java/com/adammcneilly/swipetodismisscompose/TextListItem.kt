@@ -1,11 +1,14 @@
 package com.adammcneilly.swipetodismisscompose
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adammcneilly.swipetodismisscompose.ui.theme.SwipeToDismissComposeTheme
@@ -14,7 +17,10 @@ import com.adammcneilly.swipetodismisscompose.ui.theme.SwipeToDismissComposeThem
 fun TextListItem(text: String) {
     Text(
         text = text,
-        modifier = Modifier.padding(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.White)
+            .padding(12.dp),
     )
 }
 
