@@ -14,11 +14,14 @@ import androidx.compose.runtime.Composable
 fun SwipeDismissItem(
     background: @Composable RowScope.() -> Unit,
     content: @Composable RowScope.() -> Unit,
+    onDismissed: (isDismissed: Boolean) -> Unit,
 ) {
     val dismissState = rememberDismissState()
     val dismissedToEnd = dismissState.isDismissed(DismissDirection.StartToEnd)
     val dismissedToStart = dismissState.isDismissed(DismissDirection.EndToStart)
     val isDismissed = (dismissedToEnd || dismissedToStart)
+
+    onDismissed.invoke(isDismissed)
 
     AnimatedVisibility(visible = !isDismissed) {
         SwipeToDismiss(
