@@ -34,27 +34,38 @@ fun SwipeDismissItem(
     val hasTriedToDismiss = remember { mutableStateOf(false) }
     var hasConfirmedDismissal: Boolean by remember { mutableStateOf(false) }
 
+    var hasTriedToEdit: Boolean by remember { mutableStateOf(false) }
+
     val dismissState = rememberDismissState(
         confirmStateChange = {
-            if (it == DismissValue.DismissedToEnd) {
-                hasTriedToDismiss.value = true
+            when (it) {
+                DismissValue.DismissedToEnd -> {
+                    hasTriedToDismiss.value = true
 
-                hasConfirmedDismissal
-            } else {
-                false
+                    hasConfirmedDismissal
+                }
+                DismissValue.DismissedToStart -> {
+                    hasTriedToEdit = true
+
+                    false
+                }
+                else -> {
+                    false
+                }
             }
         }
     )
+
     val dismissedToEnd = dismissState.isDismissed(DismissDirection.StartToEnd)
     val dismissedToStart = dismissState.isDismissed(DismissDirection.EndToStart)
     val isDismissed = (dismissedToEnd || dismissedToStart)
 
     onDismissed.invoke(isDismissed)
 
-    val contentOffset = if (hasTriedToDismiss.value) {
-        48.dp
-    } else {
-        0.dp
+    val contentOffset = when {
+        hasTriedToDismiss.value -> 48.dp
+        hasTriedToEdit -> (-48).dp
+        else -> 0.dp
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -62,7 +73,6 @@ fun SwipeDismissItem(
     AnimatedVisibility(visible = !isDismissed) {
         SwipeToDismiss(
             state = dismissState,
-            directions = setOf(DismissDirection.StartToEnd),
             background = {
                 SwipeBackground(
                     onDeleteClicked = {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -75,6 +77,12 @@ fun SwipeBackground(
     ) {
         IconButton(onClick = onDeleteClicked) {
             Icon(Icons.Default.Delete, contentDescription = "Delete")
+        }
+
+        Spacer(modifier = Modifier.weight(1F))
+
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(Icons.Default.Edit, contentDescription = "Edit")
         }
     }
 }
