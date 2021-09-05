@@ -2,7 +2,6 @@ package com.adammcneilly.swipetodismisscompose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.offset
@@ -36,7 +35,17 @@ fun SwipeDismissItem(
     val hasTriedToDismiss = remember { mutableStateOf(false) }
     var hasConfirmedDismissal: Boolean by remember { mutableStateOf(false) }
 
-    val dismissState = rememberDismissState()
+    val dismissState = rememberDismissState(
+        confirmStateChange = {
+            if (it == DismissValue.DismissedToEnd) {
+                hasTriedToDismiss.value = true
+
+                hasConfirmedDismissal
+            } else {
+                false
+            }
+        }
+    )
     val dismissedToEnd = dismissState.isDismissed(DismissDirection.StartToEnd)
     val dismissedToStart = dismissState.isDismissed(DismissDirection.EndToStart)
     val isDismissed = (dismissedToEnd || dismissedToStart)
