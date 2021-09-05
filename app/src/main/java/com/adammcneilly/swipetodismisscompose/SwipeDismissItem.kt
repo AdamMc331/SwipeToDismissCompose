@@ -2,6 +2,7 @@ package com.adammcneilly.swipetodismisscompose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.offset
@@ -28,23 +29,14 @@ import androidx.compose.runtime.setValue
 fun SwipeDismissItem(
     content: @Composable () -> Unit,
     onDismissed: (isDismissed: Boolean) -> Unit,
+    visible: Boolean,
 ) {
 
     // Tips for understanding differences: https://dev.to/zachklipp/remember-mutablestateof-a-cheat-sheet-10ma
     val hasTriedToDismiss = remember { mutableStateOf(false) }
     var hasConfirmedDismissal: Boolean by remember { mutableStateOf(false) }
 
-    val dismissState = rememberDismissState(
-        confirmStateChange = {
-            if (it == DismissValue.DismissedToEnd) {
-                hasTriedToDismiss.value = true
-
-                hasConfirmedDismissal
-            } else {
-                false
-            }
-        }
-    )
+    val dismissState = rememberDismissState()
     val dismissedToEnd = dismissState.isDismissed(DismissDirection.StartToEnd)
     val dismissedToStart = dismissState.isDismissed(DismissDirection.EndToStart)
     val isDismissed = (dismissedToEnd || dismissedToStart)
@@ -59,7 +51,9 @@ fun SwipeDismissItem(
 
     val coroutineScope = rememberCoroutineScope()
 
-    AnimatedVisibility(visible = !isDismissed) {
+    AnimatedVisibility(
+        visible = visible,
+    ) {
         SwipeToDismiss(
             state = dismissState,
             directions = setOf(DismissDirection.StartToEnd),

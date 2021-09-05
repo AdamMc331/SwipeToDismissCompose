@@ -30,7 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun TextList(texts: List<String>) {
     val itemListState = remember {
-        mutableStateOf(texts)
+        mutableStateOf(texts.map {
+            it to true
+        })
     }
 
     LazyColumn {
@@ -45,7 +47,7 @@ fun TextList(texts: List<String>) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        TextListItem(text = text)
+                        TextListItem(text = text.first)
 
                         Divider(
                             color = Color.DarkGray,
@@ -56,9 +58,16 @@ fun TextList(texts: List<String>) {
                     Log.d("TextList", "IsDismissed: $isDismissed; Text: $text")
 
                     if (isDismissed) {
-                        itemListState.value = itemListState.value.filter { it != text }
+                        itemListState.value = itemListState.value.map {
+                            if (it.first == text.first) {
+                                it.first to false
+                            } else {
+                                it
+                            }
+                        }
                     }
-                }
+                },
+                visible = text.second,
             )
         }
     }
